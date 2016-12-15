@@ -1,3 +1,4 @@
+var Interface = require('./signalpattern/cli.js');
 /**
  * A Bot for Slack!
  */
@@ -85,11 +86,28 @@ controller.on('bot_channel_join', function (bot, message) {
     bot.reply(message, "I'm here!")
 });
 
-controller.hears('hello', 'direct_message', function (bot, message) {
+controller.hears('hello', ['direct_message', 'mention', 'direct_mention'], function (bot, message) {
     bot.reply(message, 'Hello!');
+    
 });
 
+controller.on('file_shared', function (bot, message) {
+    bot.api.files.info({token: process.env.TOKEN, file: message.file.id}, function(err, response) {
+        if (err) {console.log(err);}
 
+        var senderID = response.file.channels[0] || response.file.groups[0] || response.file.ims[0];
+        var fileUrl = response.file.url_private;
+
+        bot.api.chat.postMessage({token: process.env.TOKEN, channel: senderID, text: "I have received your file. Would you like to run this SignalPattern? Mention me with YES or NO?"});
+
+        controller.hears('yes', ['direct_message', 'mention', 'direct_mention'], function (bot, message) {
+            bot.startConversation(message, function(err, convo) {
+                var interface = new Interface(fileUrl, process.env.TOKEN, convo, bot, senderID);
+                interface.loadSPDoc();
+            });
+        });
+    });
+});
 /**
  * AN example of what could be:
  * Any un-handled direct mention gets a reaction and a pat response!
