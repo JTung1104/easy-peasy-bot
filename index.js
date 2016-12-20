@@ -1,4 +1,4 @@
-var Interface = require('./signalpattern/cli.js');
+var Interface = require('./signalpattern/interface.js');
 /**
  * A Bot for Slack!
  */
@@ -88,7 +88,6 @@ controller.on('bot_channel_join', function (bot, message) {
 
 controller.hears('hello', ['direct_message', 'mention', 'direct_mention'], function (bot, message) {
     bot.reply(message, 'Hello!');
-    
 });
 
 controller.on('file_shared', function (bot, message) {
@@ -98,9 +97,9 @@ controller.on('file_shared', function (bot, message) {
         var senderID = response.file.channels[0] || response.file.groups[0] || response.file.ims[0];
         var fileUrl = response.file.url_private;
 
-        bot.api.chat.postMessage({token: process.env.TOKEN, channel: senderID, text: "I have received your file. Would you like to run this SignalPattern? Mention me with YES or NO?"});
+        bot.api.chat.postMessage({token: process.env.TOKEN, channel: senderID, text: "I have received your file. Mention me and say 'Run SP' if you would like to run this SignalPattern."});
 
-        controller.hears('yes', ['direct_message', 'mention', 'direct_mention'], function (bot, message) {
+        controller.hears('run sp', ['direct_message', 'mention', 'direct_mention'], function (bot, message) {
             bot.startConversation(message, function(err, convo) {
                 var interface = new Interface(fileUrl, process.env.TOKEN, convo, bot, senderID);
                 interface.loadSPDoc();

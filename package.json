@@ -27,6 +27,12 @@
   "dependencies": {
     "botkit": "0.2.2",
     "botkit-storage-mongo": "^1.0.2",
-    "mongodb": "^1.4.39"
+    "mongodb": "^1.4.39",
+    "append-query": "2.0.1",
+    "async": "2.1.2",
+    "lodash": "4.16.4",
+    "randumb": "0.0.2",
+    "uuid": "3.0.1",
+    "request": "2.75.0"
   }
 }
